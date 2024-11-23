@@ -76,6 +76,11 @@ void handle_request(int nfd) {
          // ingore some requests that don't begin with GET or HEAD
          if(!(strcmp("HEAD", first) == 0 || strcmp("GET", first) == 0)){
             free(line);
+            free(first);
+            free(second);
+            free(third);
+            free(extra);
+            fclose(network);
             exit(0);
          }
 
@@ -91,6 +96,11 @@ void handle_request(int nfd) {
             } 
 
             free(line);
+            free(first);
+            free(second);
+            free(third);
+            free(extra);
+            fclose(network);
             send_error_responce(nfd, "400", "Not the correct number of args");
             exit(1);
          }
@@ -98,6 +108,11 @@ void handle_request(int nfd) {
          // check .. 
          if(second[0] == '.' && second[1] == '.'){
             free(line);
+            free(first);
+            free(second);
+            free(third);
+            free(extra);
+            fclose(network);
             send_error_responce(nfd, "500", "dont do that bro :(");
             exit(1);
          }
@@ -112,56 +127,110 @@ void handle_request(int nfd) {
             if(size == 0){
                // site not found
                free(line);
+               free(first);
+               free(second);
+               free(third);
+               free(extra);
+               fclose(network);
                send_error_responce(nfd, "404", "Not Found");
                exit(1);
             }
 
             send_responce(nfd, "200 OK", "text/html", NULL, size);
             free(line);
+            free(first);
+            free(second);
+            free(third);
+            free(extra);
+            fclose(network);
             exit(0);
 
          } else if(strcmp("GET", first) == 0){
             
             FILE *file;
+            size_t size;
             if(strncmp(second, "cgi-like", 8) == 0){
-               
+
                int i;
-               for(i = 0; i < 8; i++){
-                  second++; 
+               for(i = 0; i < 9; i++){
+                  second++;
                }
                
                char file_name[20];
-               sprintf(file_name, "%d", pid);
+               pid_t parent_pid = getpid();
+               sprintf(file_name, "%d.txt", parent_pid);
 
-               int value;
-               value = cgi_like(second, file_name);
-               if(value == 1){
+               pid_t pid2 = fork();
+
+               if(pid2 < 0){
                   free(line);
+                  free(first);
+                  free(second);
+                  free(third);
+                  free(extra);
+                  fclose(network);
                   send_error_responce(nfd, "500", "error with cgi-like");
                   exit(1);
-               }
 
-               // get size
-               size_t size = file_size(file_name);
+               } else if(pid2 == 0) {
 
-               if(size == 0){
-                  // site not found
+                  int value;
+                  value = cgi_like(second, file_name);
                   free(line);
-                  send_error_responce(nfd, "404", "Not Found");
-                  exit(1);
-               }
+                  free(first);
+                  free(second);
+                  free(third);
+                  free(extra);
+                  fclose(network);
+                  exit(value);
+                  
+               } else {
+                  int status;
+                  waitpid(pid2, &status, 0);
 
-               file = fopen(file_name, "r");
+                  if(WEXITSTATUS(status) > 0){
+                     free(line);
+                     free(first);
+                     free(second);
+                     fclose(network);
+                     printf("%i", WEXITSTATUS(status));
+                     send_error_responce(nfd, "500", "error with cgi-like");
+                     exit(1);
+                  }
+
+                  // get size
+                  size = file_size(file_name);
+
+                  if(size == 0){
+                     // site not found
+                     free(line);
+                     free(first);
+                     free(second);
+                     free(third);
+                     free(extra);
+                     fclose(network);
+                     send_error_responce(nfd, "404", "Not Found (size)");
+                     exit(1);
+                  }
+
+                  file = fopen(file_name, "r");
+               }
+               
 
             } else {
 
                // get size
-               size_t size = file_size(second);
+               size = file_size(second);
 
                if(size == 0){
                   // site not found
                   free(line);
-                  send_error_responce(nfd, "404", "Not Found");
+                  free(first);
+                  free(second);
+                  free(third);
+                  free(extra);
+                  fclose(network);
+                  send_error_responce(nfd, "404", "Not Found (SIZE)");
                   exit(1);
                }
 
@@ -171,7 +240,13 @@ void handle_request(int nfd) {
             char content[size];
             if(file == NULL){
                free(line);
-               send_error_responce(nfd, "404", "File Not Found");
+               free(first);
+               free(second);
+               free(third);
+               free(extra);
+               fclose(file);
+               fclose(network);
+               send_error_responce(nfd, "404", "FILE Not Found NULL FILE");
                exit(1);
             }
 
@@ -179,21 +254,39 @@ void handle_request(int nfd) {
 
             if((read = fread(content, 1, size, file)) < size){
                free(line);
-               send_error_responce(nfd, "404", "Not Found");
+               free(first);
+               free(second);
+               free(third);
+               free(extra);
+               fclose(file);
+               fclose(network);
+               send_error_responce(nfd, "404", "Cant Read File");
                exit(1);
             }
             
             send_responce(nfd, "200 OK", "text/html", content, size);
 
-            fclose(file);
             free(line);
+            free(first);
+            free(second);
+            free(third);
+            free(extra);
+            fclose(file);
+            fclose(network);
             exit(0);
          }
          
          free(line);
-         send_error_responce(nfd, "400", "First arg needs to be eith HEAD or GET");
+         free(first);
+         free(second);
+         free(third);
+         free(extra);
+         fclose(network);
+         send_error_responce(nfd, "400", "First arg needs to be either HEAD or GET");
          exit(1);
       } 
+
+      free(line);
    }
 
    free(line);

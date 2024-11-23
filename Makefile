@@ -26,6 +26,8 @@ net.o : net.c net.h
 cgi_like.o : cgi_like.c cgi_like.h
 	$(CC) $(CFLAGS) -c cgi_like.c
 
+test :
+	$(CC) $(CFLAGS) test.c -o test
 
 clean :
 	rm *.o $(PROGS) core

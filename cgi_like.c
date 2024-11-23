@@ -9,7 +9,7 @@
 #include <string.h>
 
 
-int cgi_like(char *command, char *pid){
+int cgi_like(char *command, char *file_name){
 
     char *name = strsep(&command, "?");
 
@@ -35,14 +35,37 @@ int cgi_like(char *command, char *pid){
         array->items += 1;
     }
 
-    int file = open(pid, O_WRONLY);
+    // add NULL
+    if(array->items >= array->capacity){
+        array->capacity += 1;
+        array->strings = realloc(array->strings, sizeof(char *) * array->capacity);
+    }
+
+    array->strings[array->items] = NULL;
+    array->items += 1;
+
+    int file = open(file_name, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
     if(file == -1){
-        perror("File not found");
+        // free memory
+        int i;
+        for(i = 0; i < array->items; i++){
+            free(array->strings[i]);
+        }
+        free(array->strings);
+        free(array);
+        perror("Error opening file");
         return 1;
     }
     
     // make stdout now go to file descriptor
     if (dup2(file, STDOUT_FILENO) == -1) {
+        // free memory
+        int i;
+        for(i = 0; i < array->items; i++){
+            free(array->strings[i]);
+        }
+        free(array->strings);
+        free(array);
         perror("dup2 failed");
         return 1;
     }
@@ -53,14 +76,33 @@ int cgi_like(char *command, char *pid){
     strcat(path, name);
 
     int read;
+    printf("path %s", path);
+
     read = execvp(path, array->strings);
     if (read == -1) {
+        // free memory
+        int i;
+        for(i = 0; i < array->items; i++){
+            free(array->strings[i]);
+        }
+        free(array->strings);
+        free(array);
+        perror("exec failed");
         return 1;
     }
 
+    // free memory
+    int i;
+    for(i = 0; i < array->items; i++){
+        free(array->strings[i]);
+    }
+    free(array->strings);
+    free(array);
     return 0;
-
 }
+
+
+    
 
     
 

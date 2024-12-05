@@ -263,11 +263,13 @@ void run_service(int fd)
    }
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
-   int port; 
-   printf("ENTER PORT: ");
-   scanf("%d", &port);
+   if (argc != 2){
+      perror("Use correct number of Args");
+   }
+
+   int port = atoi(argv[1]); 
 
    if(port > 65535 || port < 1024) {
       perror("Invalid port");

@@ -1,15 +1,10 @@
 CC = gcc
 CFLAGS = -Wall -std=c99 -pedantic
-CLIENT = client
-CLIENT_OBJS = client.o
 SERVER = httpd
 SERVER_OBJS = httpd.o net.o cgi_like.o
-PROGS = $(CLIENT) $(SERVER)
+PROGS = $(SERVER)
 
-all : $(PROGS)
-
-$(CLIENT) : $(CLIENT_OBJS)
-	$(CC) $(CFLAGS) -o $(CLIENT) $(CLIENT_OBJS)
+all : $(SERVER)
 
 client.o : client.c
 	$(CC) $(CFLAGS) -c client.c

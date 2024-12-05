@@ -1,0 +1,62 @@
+hazelwoo@unix5:/home/hazelwoo/cpe357/357-assignment-5-James-Hazelwood $ valgrind --leak-check=yes ./httpd
+==17282== Memcheck, a memory error detector
+==17282== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==17282== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==17282== Command: ./httpd
+==17282== 
+ENTER PORT: 2828
+listening on port: 2828
+Connection established
+Message received from client: HEAD /test.html HTTP/1.1
+HEAD test.html HTTP/1.1
+
+Message received from client: Host: unix5.csc.calpoly.edu:2828
+Message received from client: Accept: */*
+Message received from client: User-Agent: curl/7.29.0
+Connection closed
+==17353== 
+==17353== HEAP SUMMARY:
+==17353==     in use at exit: 0 bytes in 0 blocks
+==17353==   total heap usage: 2 allocs, 2 frees, 688 bytes allocated
+==17353== 
+==17353== All heap blocks were freed -- no leaks are possible
+==17353== 
+==17353== For lists of detected and suppressed errors, rerun with: -s
+==17353== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==17351== 
+==17351== HEAP SUMMARY:
+==17351==     in use at exit: 0 bytes in 0 blocks
+==17351==   total heap usage: 2 allocs, 2 frees, 688 bytes allocated
+==17351== 
+==17351== All heap blocks were freed -- no leaks are possible
+==17351== 
+==17351== For lists of detected and suppressed errors, rerun with: -s
+==17351== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+Message received from client: 
+==17352== 
+==17352== HEAP SUMMARY:
+==17352==     in use at exit: 0 bytes in 0 blocks
+==17352==   total heap usage: 2 allocs, 2 frees, 688 bytes allocated
+==17352== 
+==17352== All heap blocks were freed -- no leaks are possible
+==17352== 
+==17352== For lists of detected and suppressed errors, rerun with: -s
+==17352== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==17354== 
+==17354== HEAP SUMMARY:
+==17354==     in use at exit: 0 bytes in 0 blocks
+==17354==   total heap usage: 2 allocs, 2 frees, 688 bytes allocated
+==17354== 
+==17354== All heap blocks were freed -- no leaks are possible
+==17354== 
+==17354== For lists of detected and suppressed errors, rerun with: -s
+==17354== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==17355== 
+==17355== HEAP SUMMARY:
+==17355==     in use at exit: 0 bytes in 0 blocks
+==17355==   total heap usage: 2 allocs, 2 frees, 688 bytes allocated
+==17355== 
+==17355== All heap blocks were freed -- no leaks are possible
+==17355== 
+==17355== For lists of detected and suppressed errors, rerun with: -s
+==17355== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

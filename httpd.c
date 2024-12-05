@@ -75,6 +75,9 @@ void handle_request(int nfd) {
 
          // ingore some requests that don't begin with GET or HEAD
          if(!(strcmp("HEAD", first) == 0 || strcmp("GET", first) == 0)){
+            free(line);
+            free(first);
+            fclose(network);
             exit(0);
          }
 
@@ -90,6 +93,9 @@ void handle_request(int nfd) {
             } 
             
             send_error_responce(nfd, "400", "Not the correct number of args");
+            free(line);
+            free(first);
+            fclose(network);
             exit(1);
          }
 
@@ -97,6 +103,9 @@ void handle_request(int nfd) {
          if(second[0] == '.' && second[1] == '.'){
             
             send_error_responce(nfd, "500", "dont do that bro :(");
+            free(line);
+            free(first);
+            fclose(network);
             exit(1);
          }
 
@@ -111,10 +120,16 @@ void handle_request(int nfd) {
                // site not found
                
                send_error_responce(nfd, "404", "Not Found");
+               free(line);
+               free(first);
+               fclose(network);
                exit(1);
             }
 
             send_responce(nfd, "200 OK", "text/html", NULL, size);
+            free(line);
+            free(first);
+            fclose(network);
             exit(0);
 
          } else if(strcmp("GET", first) == 0){
@@ -136,6 +151,9 @@ void handle_request(int nfd) {
 
                if(pid2 < 0){
                   send_error_responce(nfd, "500", "error with cgi-like");
+                  free(line);
+                  free(first);
+                  fclose(network);
                   exit(1);
 
                } else if(pid2 == 0) {
@@ -151,6 +169,9 @@ void handle_request(int nfd) {
                   if(WEXITSTATUS(status) > 0){
                      printf("%i", WEXITSTATUS(status));
                      send_error_responce(nfd, "500", "error with cgi-like");
+                     free(line);
+                     free(first);
+                     fclose(network);
                      exit(1);
                   }
 
@@ -160,6 +181,9 @@ void handle_request(int nfd) {
                   if(size == 0){
                      // site not found
                      send_error_responce(nfd, "404", "Not Found (size)");
+                     free(line);
+                     free(first);
+                     fclose(network);
                      exit(1);
                   }
 
@@ -175,6 +199,9 @@ void handle_request(int nfd) {
                if(size == 0){
                   // site not found
                   send_error_responce(nfd, "404", "Not Found (SIZE)");
+                  free(line);
+                  free(first);
+                  fclose(network);
                   exit(1);
                }
 
@@ -185,6 +212,9 @@ void handle_request(int nfd) {
             if(file == NULL){
                fclose(file);
                send_error_responce(nfd, "404", "FILE Not Found NULL FILE");
+               free(line);
+               free(first);
+               fclose(network);
                exit(1);
             }
 
@@ -193,21 +223,29 @@ void handle_request(int nfd) {
             if((read = fread(content, 1, size, file)) < size){
                fclose(file);
                send_error_responce(nfd, "404", "Cant Read File");
+               free(line);
+               free(first);
+               fclose(network);
                exit(1);
             }
             
             send_responce(nfd, "200 OK", "text/html", content, size);
 
             fclose(file);
+            free(line);
+            free(first);
+            fclose(network);
             exit(0);
          }
          
          send_error_responce(nfd, "400", "First arg needs to be either HEAD or GET");
+         free(line);
+         free(first);
+         fclose(network);
          exit(1);
       } 
    }
 
-   free(line);
    fclose(network);
 }
 
